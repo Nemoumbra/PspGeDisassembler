@@ -16,7 +16,7 @@
 // https://github.com/hrydgard/ppsspp and http://www.ppsspp.org/.
 
 #include <cstdio>
-// #include "Core/MemMap.h"
+
 #include "ge_constants.h"
 //#include "GPU/GPU.h"
 #include "GPUInterface.h"

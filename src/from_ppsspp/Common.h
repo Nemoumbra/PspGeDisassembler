@@ -20,7 +20,7 @@
 // DO NOT EVER INCLUDE <windows.h> directly _or indirectly_ from this file
 // since it slows down the build a lot.
 
-#include <stdarg.h>
+#include <cstdarg>
 
 #ifdef _MSC_VER
 #pragma warning(disable:4100)
@@ -28,7 +28,6 @@
 #endif
 
 #include "CommonTypes.h"
-//#include "CommonFuncs.h"
 
 #ifndef DISALLOW_COPY_AND_ASSIGN
 #define DISALLOW_COPY_AND_ASSIGN(t) \
