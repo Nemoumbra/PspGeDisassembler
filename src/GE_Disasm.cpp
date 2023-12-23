@@ -1349,12 +1349,11 @@ void GE_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufs
     }
 }
 
-std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data) {
+std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data, u32 pc) {
     if (data.size() % 4 != 0) {
         return {};
     }
 
-    // std::cout << std::hex << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << "\n";
     char buffer[1024];
     std::vector<GPUDebugOp> result;
     GPUDebugOp info;
@@ -1363,13 +1362,12 @@ std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint
     u32* addr = (u32*) data.data();
     for (u32 i = 0; i < data.size(); ++addr, i += 4) {
         u32 op = *addr;
-        const u32 pc = i;
-        // std::cout << "op = " << op << ", pc = " << pc << "\n";
+        const u32 current_pc = pc + i;
 
-        GeDisassembleOp(pc, op, prev, buffer, sizeof(buffer));
+        GeDisassembleOp(current_pc, op, prev, buffer, sizeof(buffer));
         prev = op;
 
-        info.pc = pc;
+        info.pc = current_pc;
         info.cmd = op >> 24;
         info.op = op;
         info.desc = buffer;
