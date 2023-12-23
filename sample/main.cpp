@@ -1,17 +1,14 @@
 #include <iostream>
-
-#include "GPU_Disasm.h"
 #include <vector>
 #include <filesystem>
 #include <fstream>
 #include <format>
 
+#include "../src/GE_Disasm.h"
+
 
 namespace fs = std::filesystem;
 
-inline void ignoreLine() {
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
 
 void dump_disasm_to_file(const fs::path& path, const std::vector<GPUDebugOp>& disassembled) {
     std::ofstream outfile(path, std::ios::binary);
@@ -29,7 +26,7 @@ void dump_disasm_to_file(const fs::path& path, const std::vector<GPUDebugOp>& di
 }
 
 void run_tests() {
-    GPU_Disasm disasm;
+    GE_Disasm disasm;
 
     const std::vector<uint8_t> data = {
             0xC0, 0x3D, 0xAF, 0x08, 0x01, 0x00, 0x00, 0xD2, 0x00, 0x02, 0x00, 0x9D, 0x00, 0x40, 0x04, 0x9C,
@@ -73,31 +70,29 @@ void disassemble_file(const fs::path& path, const fs::path& save_to) {
     infile.seekg(0);
     infile.read(reinterpret_cast<char*>(data.data()), size);
 
-    GPU_Disasm disasm;
+    GE_Disasm disasm;
     auto results = disasm.DisassembleOpcodeRange(data);
 
     dump_disasm_to_file(save_to, results);
 }
 
-int main() {
-    // run_tests();
-    std::string line; // buffer
+int main(int argc, char** argv) {
+    if (argc == 3) {
+        disassemble_file(argv[1], argv[2]);
+        return 0;
+    }
+
+    std::string line;
 
     fs::path file_path;
-
     std::cout << "Enter the path to the input file\n";
-    // ignoreLine();
     std::getline(std::cin, line);
     file_path = line;
 
     fs::path destination_path;
-
     std::cout << "Enter the path the disassembled data will be written to\n";
-    // ignoreLine();
     std::getline(std::cin, line);
     destination_path = line;
 
     disassemble_file(file_path, destination_path);
-
-    return 0;
 }

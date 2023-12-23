@@ -17,7 +17,7 @@ struct GPUDebugOp {
     std::string desc;
 };
 
-class GPU_Disasm {
+class GE_Disasm {
 private:
     State gstate{};
     StateCache gstate_c{};
@@ -75,7 +75,7 @@ private:
     };
 
 public:
-    GPU_Disasm() = default;
+    GE_Disasm() = default;
 
     void GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize);
     [[nodiscard]] std::vector<GPUDebugOp> DisassembleOpcodeRange(const std::vector<uint8_t>& data);

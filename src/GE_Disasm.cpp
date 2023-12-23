@@ -1,14 +1,13 @@
 //
 // Created by Nemoumbra on 19.12.2023.
 //
-#include "GPU_Disasm.h"
+#include "GE_Disasm.h"
 
 #include "from_ppsspp/ge_constants.h"
 #include <cstdio>
 #include <cstring> // for memcpy
-// #include <iostream> // std::cout
 
-void GPU_Disasm::GeDescribeVertexType(u32 op, char *buffer, int len) {
+void GE_Disasm::GeDescribeVertexType(u32 op, char *buffer, int len) {
     bool through = (op & GE_VTYPE_THROUGH_MASK) == GE_VTYPE_THROUGH;
     int tc = (op & GE_VTYPE_TC_MASK) >> GE_VTYPE_TC_SHIFT;
     int col = (op & GE_VTYPE_COL_MASK) >> GE_VTYPE_COL_SHIFT;
@@ -46,14 +45,14 @@ void GPU_Disasm::GeDescribeVertexType(u32 op, char *buffer, int len) {
         w[-2] = '\0';
 }
 
-float GPU_Disasm::getFloat24(unsigned int data) {
+float GE_Disasm::getFloat24(unsigned int data) {
     data <<= 8;
     float f;
     memcpy(&f, &data, 4);
     return f;
 }
 
-void GPU_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize) {
+void GE_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize) {
     u32 cmd = op >> 24;
     u32 data = op & 0xFFFFFF;
 
@@ -1350,7 +1349,7 @@ void GPU_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int buf
     }
 }
 
-std::vector<GPUDebugOp> GPU_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data) {
+std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data) {
     if (data.size() % 4 != 0) {
         return {};
     }
@@ -1379,7 +1378,7 @@ std::vector<GPUDebugOp> GPU_Disasm::DisassembleOpcodeRange(const std::vector<uin
     return result;
 }
 
-GPUDebugOp GPU_Disasm::DisassembleOpcode(const u32 op, u32 pc) {
+GPUDebugOp GE_Disasm::DisassembleOpcode(const u32 op, u32 pc) {
     char buffer[1024];
     GeDisassembleOp(pc, op, 0, buffer, sizeof(buffer));
 
