@@ -2,6 +2,31 @@
 
 #include "GPU_Disasm.h"
 #include <vector>
+#include <filesystem>
+#include <fstream>
+#include <format>
+
+
+namespace fs = std::filesystem;
+
+inline void ignoreLine() {
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void dump_disasm_to_file(const fs::path& path, const std::vector<GPUDebugOp>& disassembled) {
+    std::ofstream outfile(path, std::ios::binary);
+    if (!outfile) {
+        std::cout << "Cannot access the file " << path << "\n";
+        return;
+    }
+
+    uint32_t offset = 0;
+    for (const auto& line: disassembled) {
+        auto output_start = std::format("{:08X}  ", offset);
+        outfile << output_start << line.desc << "\n";
+        offset += 4;
+    }
+}
 
 void run_tests() {
     GPU_Disasm disasm;
@@ -28,8 +53,51 @@ void run_tests() {
     std::cout << "Done!\n";
 }
 
-int main() {
+void disassemble_file(const fs::path& path, const fs::path& save_to) {
+    std::ifstream infile(path, std::ios::binary | std::ios::ate);
+    if (!infile) {
+        std::cout << "Cannot open the file " << path << "\n";
+        return;
+    }
 
-    run_tests();
+    auto size = infile.tellg();
+    auto remainder = size % 4;
+    if (remainder) {
+        std::cout << "The file size is not divisible by 4 - trimming..." << "\n";
+        size -= remainder;
+    }
+
+    std::vector<uint8_t> data;
+    data.resize(size);
+
+    infile.seekg(0);
+    infile.read(reinterpret_cast<char*>(data.data()), size);
+
+    GPU_Disasm disasm;
+    auto results = disasm.DisassembleOpcodeRange(data);
+
+    dump_disasm_to_file(save_to, results);
+}
+
+int main() {
+    // run_tests();
+    std::string line; // buffer
+
+    fs::path file_path;
+
+    std::cout << "Enter the path to the input file\n";
+    // ignoreLine();
+    std::getline(std::cin, line);
+    file_path = line;
+
+    fs::path destination_path;
+
+    std::cout << "Enter the path the disassembled data will be written to\n";
+    // ignoreLine();
+    std::getline(std::cin, line);
+    destination_path = line;
+
+    disassemble_file(file_path, destination_path);
+
     return 0;
 }

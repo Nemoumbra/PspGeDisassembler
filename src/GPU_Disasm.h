@@ -78,6 +78,6 @@ public:
     GPU_Disasm() = default;
 
     void GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize);
-    std::vector<GPUDebugOp> DisassembleOpcodeRange(const std::vector<uint8_t>& data);
+    [[nodiscard]] std::vector<GPUDebugOp> DisassembleOpcodeRange(const std::vector<uint8_t>& data);
     GPUDebugOp DisassembleOpcode(u32 op, u32 pc);
 };
