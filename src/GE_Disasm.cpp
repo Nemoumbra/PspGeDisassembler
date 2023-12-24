@@ -52,7 +52,7 @@ float GE_Disasm::getFloat24(unsigned int data) {
     return f;
 }
 
-void GE_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize) {
+void GE_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize) const {
     u32 cmd = op >> 24;
     u32 data = op & 0xFFFFFF;
 
@@ -1349,7 +1349,7 @@ void GE_Disasm::GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufs
     }
 }
 
-std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data, u32 pc) {
+std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint8_t>& data, u32 pc) const {
     if (data.size() % 4 != 0) {
         return {};
     }
@@ -1376,7 +1376,7 @@ std::vector<GPUDebugOp> GE_Disasm::DisassembleOpcodeRange(const std::vector<uint
     return result;
 }
 
-GPUDebugOp GE_Disasm::DisassembleOpcode(const u32 op, u32 pc) {
+GPUDebugOp GE_Disasm::DisassembleOpcode(const u32 op, u32 pc) const {
     char buffer[1024];
     GeDisassembleOp(pc, op, 0, buffer, sizeof(buffer));
 
@@ -1387,4 +1387,3 @@ GPUDebugOp GE_Disasm::DisassembleOpcode(const u32 op, u32 pc) {
     info.desc = buffer;
     return info;
 }
-

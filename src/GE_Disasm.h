@@ -77,7 +77,33 @@ private:
 public:
     GE_Disasm() = default;
 
-    void GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize);
-    [[nodiscard]] std::vector<GPUDebugOp> DisassembleOpcodeRange(const std::vector<uint8_t>& data, u32 pc = 0);
-    GPUDebugOp DisassembleOpcode(u32 op, u32 pc);
+    // Disasm config control (GE context):
+    // 1) The gstate fields
+    [[nodiscard]] u32 getClutaddr() const { return gstate.clutaddr; }
+    void setClutaddr(u32 value) { gstate.clutaddr = value; }
+    [[nodiscard]] u32 getClutaddrupper() const { return gstate.clutaddrupper; }
+    void setClutaddrupper(u32 value) { gstate.clutaddrupper = value; }
+    [[nodiscard]] u32 getBase() const { return gstate.base; }
+    void setBase(u32 value) { gstate.base = value; }
+    [[nodiscard]] u32 getTransfersrc() const { return gstate.transfersrc; }
+    void setTransfersrc(u32 value) { gstate.transfersrc = value; }
+    [[nodiscard]] u32 getTransferdst() const { return gstate.transferdst; }
+    void setTransferdst(u32 value) { gstate.transferdst = value; }
+    [[nodiscard]] u32 getVertType() const { return gstate.vertType; }
+    void setVertType(u32 value) { gstate.vertType = value; }
+
+    // 2) The gstate_c fields
+    [[nodiscard]] u32 getVertexAddr() const { return gstate_c.vertexAddr; }
+    void setVertexAddr(u32 value) { gstate_c.vertexAddr = value; }
+    [[nodiscard]] u32 getIndexAddr() const { return gstate_c.indexAddr; }
+    void setIndexAddr(u32 value) { gstate_c.indexAddr = value; }
+    [[nodiscard]] u32 getOffsetAddr() const { return gstate_c.offsetAddr; }
+    void setOffsetAddr(u32 value) { gstate_c.offsetAddr = value; }
+
+    // The low-level method that contains all the disasm logic
+    void GeDisassembleOp(u32 pc, u32 op, u32 prev, char *buffer, int bufsize) const;
+
+    // The preferred user-friendly methods for disassembling
+    [[nodiscard]] std::vector<GPUDebugOp> DisassembleOpcodeRange(const std::vector<uint8_t>& data, u32 pc = 0) const;
+    [[nodiscard]] GPUDebugOp DisassembleOpcode(u32 op, u32 pc) const;
 };
